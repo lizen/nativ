@@ -9,7 +9,7 @@ private enum ScheduledTaskFilter: String, CaseIterable, Identifiable {
 }
 
 struct ScheduledTasksView: View {
-    @ObservedObject var model: NativModel
+    var model: NativModel
     @ObservedObject var mcpHost: MCPHostManager
     @ObservedObject var extensionManager: NativExtensionManager
     var titleLeadingInset: CGFloat = 0
@@ -85,6 +85,7 @@ struct ScheduledTasksView: View {
                 delete(task)
                 pendingDeletion = nil
             }
+            .keyboardShortcut(.defaultAction)
             Button("Cancel", role: .cancel) {
                 pendingDeletion = nil
             }
@@ -115,7 +116,10 @@ struct ScheduledTasksView: View {
             Divider()
 
             if orderedTasks.isEmpty {
-                ScheduledTasksEmptyState(onCreate: presentNewTask)
+                ScheduledTasksEmptyState(
+                    onCreate: presentNewTask,
+                    showsCreateAction: draft == nil
+                )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 taskList
@@ -135,21 +139,18 @@ struct ScheduledTasksView: View {
 
             Spacer()
 
-            Button(action: presentNewTask) {
-                if draft == nil {
+            if draft == nil {
+                Button(action: presentNewTask) {
                     Label("New scheduled task", systemImage: "plus")
-                } else {
-                    Image(systemName: "plus")
-                        .frame(width: 18, height: 18)
                 }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .help("New scheduled task")
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .help("New scheduled task")
         }
         .padding(.horizontal, 22)
         .padding(.leading, titleLeadingInset)
-        .padding(.top, 20)
+        .padding(.top, ControlPanelLayout.detailHeaderTopInset)
         .padding(.bottom, 16)
     }
 

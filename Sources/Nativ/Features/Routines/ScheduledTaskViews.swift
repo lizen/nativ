@@ -214,6 +214,7 @@ struct ScheduledRunRow: View {
 
 struct ScheduledTasksEmptyState: View {
     let onCreate: () -> Void
+    let showsCreateAction: Bool
 
     var body: some View {
         ContentUnavailableView {
@@ -221,8 +222,10 @@ struct ScheduledTasksEmptyState: View {
         } description: {
             Text("Create a task to run a prompt automatically on a recurring schedule.")
         } actions: {
-            Button("New scheduled task", action: onCreate)
-                .buttonStyle(.borderedProminent)
+            if showsCreateAction {
+                Button("New scheduled task", action: onCreate)
+                    .buttonStyle(.borderedProminent)
+            }
         }
     }
 }
